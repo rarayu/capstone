@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="shortcut icon"
+      href="/img/Hook_favicon.ico"
+      type="image/x-icon"
+    />
+    <title>Hook</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500&display=swap");
+
+      body {
+        font-family: "Noto Sans KR", sans-serif;
+      }
+
+      .gradient {
+        background: linear-gradient(90deg, #0b952b9e 0%, #d8da51 100%);
+      }
+    </style>
+  </head>
+
+  <body>
+    <header
+      class="fixed z-10 bg-white w-full h-24 shadow-lg border-gray-200 py-6"
+    >
+      <div
+        class="flex flex-wrap items-center justify-between max-w-screen-xl px-4 mx-auto"
+      >
+        <div class="flex">
+          <a href="https://www.joongbu.ac.kr/is/" class="block my-auto">
+            <img src="/img/JBU_logo.png" class="h-12 mx-2" alt="중부대 로고" />
+          </a>
+          <a href="/" class="block my-auto">
+            <img src="/img/Hook_logo.png" class="h-10 mx-1" alt="Hook 로고" />
+          </a>
+        </div>
+        <div
+          class="mr-9 items-center justify-around hidden w-full lg:flex lg:w-auto"
+        >
+          <ul
+            class="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 ml-20 lg:mt-0"
+          >
+            <li>
+              <button
+                onclick="scrollToSection('about_section')"
+                class="px-4 text-sm text-black hover:text-gray-700 hover:transition-all hover:duration-300"
+              >
+                About
+              </button>
+            </li>
+            <li>
+              <button
+                onclick="scrollToSection('project_section')"
+                class="px-4 text-sm text-black hover:text-gray-700 hover:transition-all hover:duration-300"
+              >
+                Project
+              </button>
+            </li>
+            <li>
+              <button
+                onclick="scrollToSection('contact_section')"
+                class="px-4 text-sm text-black hover:text-gray-700 hover:transition-all hover:duration-300"
+              >
+                Contact
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </header>
+
+    <!-- about 영역 -->
+    <section id="about_section" class="bg-gray-100 border-b py-8 min-h-screen">
+      <div class="container max-w-5xl mx-auto m-8 w-3/4">
+        <div
+          class="mx-auto w-52 gradient text-center text-black text-lg font-bold rounded-full mt-24 mb-2 py-4 px-8 shadow-lg"
+        >
+          About
+        </div>
+      </div>
+      <div class="w-11/12 container mx-auto flex flex-wrap px-8">
+        <div class="w-full md:w-[36px] flex flex-col flex-grow flex-shrink">
+          <div
+            class="flex-1 bg-white rounded-2xl px-8 py-6 shadow-lg text-center mx-7 my-4"
+          >
+            <div class="mt-3 w-fit mx-auto">
+              <img
+                src="/img/youjin.png"
+                class="rounded-full w-32"
+                alt="profile picture"
+                srcset=""
+              />
+            </div>
+
+            <div class="mt-8">
+              <h2 class="text-black font-bold text-2xl tracking-wide">
+                이유진
+              </h2>
+            </div>
+            <p class="text-green-500 text-xl font-semibold mt-1">Process</p>
+            <p class="text-xl font-semibold mt-2 py-3">
+              <span class="">진단도구</span>
+              &
+              <span class="">DB</span>
+            </p>
+          </div>
+        </div>
+        <div class="w-full md:w-[36px] flex flex-col flex-grow flex-shrink">
+          <div
+            class="flex-1 bg-white rounded-2xl px-8 py-6 shadow-lg text-center mx-7 my-4"
+          >
+            <div class="mt-3 w-fit mx-auto">
+              <img
+                src="/img/jiwon.png"
+                class="rounded-full w-32"
+                alt="profile picture"
+                srcset=""
+              />
+            </div>
+
+            <div class="mt-8">
+              <h2 class="text-black font-bold text-2xl tracking-wide">
+                이지원
+              </h2>
+            </div>
+            <p class="text-green-500 text-xl font-semibold mt-1">Process</p>
+            <p class="text-xl font-semibold mt-2 py-3">
+              <span class="">진단도구</span>
+              &
+              <span class="">DB</span>
+            </p>
+          </div>
+        </div>
+        <div class="w-full md:w-[36px] flex flex-col flex-grow flex-shrink">
+          <div
+            class="flex-1 bg-white rounded-2xl px-8 py-6 shadow-lg text-center mx-7 my-4"
+          >
+            <div class="mt-3 w-fit mx-auto">
+              <img
+                src="/img/harin.png"
+                class="rounded-full w-32"
+                alt="profile picture"
+                srcset=""
+              />
+            </div>
+
+            <div class="mt-8">
+              <h2 class="text-black font-bold text-2xl tracking-wide">
+                신하린
+              </h2>
+            </div>
+            <p class="text-green-500 text-xl font-semibold mt-1">Web</p>
+            <p class="text-xl font-semibold mt-2 py-3">
+              <span class="">DB</span>
+              &
+              <span class="">백엔드</span>
+            </p>
+          </div>
+        </div>
+        <div class="w-full md:w-[36px] flex flex-col flex-grow flex-shrink">
+          <div
+            class="flex-1 bg-white rounded-2xl px-8 py-6 shadow-lg text-center mx-7 my-4"
+          >
+            <div class="mt-3 w-fit mx-auto">
+              <img
+                src="/img/dayeon.png"
+                class="rounded-full w-32"
+                alt="profile picture"
+                srcset=""
+              />
+            </div>
+
+            <div class="mt-8">
+              <h2 class="text-black font-bold text-2xl tracking-wide">
+                이다연
+              </h2>
+            </div>
+            <p class="text-green-500 text-xl font-semibold mt-1">Web</p>
+            <p class="text-xl font-semibold mt-2 py-3">
+              <span class="">프론트엔드</span>
+              &
+              <span class="">백엔드</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- project 영역 -->
+    <section
+      id="project_section"
+      class="bg-gray-400 border-b py-8 min-h-screen"
+    >
+      <div class="container max-w-5xl mx-auto m-8 w-3/4">
+        <div
+          class="mx-auto w-52 gradient text-center text-black font-bold rounded-full mt-24 mb-2 py-4 px-8 shadow-lg"
+        >
+          Project
+        </div>
+        <div class="flex flex-wrap bg-white border rounded-2xl shadow-xl mt-14">
+          <div class="w-full p-6 mt-6 text-center">
+            <p class="font-bold">웹취약점진단 사이트 Hook</p>
+          </div>
+          <div class="w-full lg:w-1/2 p-6 mt-3">
+            <div class="align-middle">
+              <img src="./img/Hook_img.png" class="w-80 mx-auto" />
+            </div>
+          </div>
+          <div class="w-full lg:w-1/2 p-6 mt-3 text-sm">
+            <div class="align-middle">
+              <p class="text-black mb-8 pr-3">
+                웹사이트에 대한 해킹 공격이 나날이 증가하고 있는 요즘 추세에
+                따라, 이를 예방하고 보안을 유지하기 위하여 웹사이트 해킹 공격에
+                대한 취약점의 존재 여부를 점검하고 이에 대한 진단결과와
+                대응방안을 제공하는 웹 서비스를 개발하였습니다. 현재, 이
+                웹서비스는 웹취약점 자동화 진단도구와 진단정보를 제공받을 수
+                있는 웹페이지로 이루어져있습니다.
+              </p>
+              <p class="text-black mb-8 pr-3">
+                <span class="text-blue-500">웹취약점 자동화 진단도구</span>는
+                <span class="text-red-500">Python</span>을 이용하여
+                개발하였습니다. 이 도구는 SQL Injection, XSS, CSRF등 총 20가지의
+                웹 취약점을 진단할 수 있습니다. selenium을 중점적으로 활용하여
+                자동으로 웹 취약점을 진단할 수 있도록 만들었으며, JS를 활용하는
+                웹페이지에 더욱 특화되어 있습니다.
+              </p>
+              <p class="text-black mb-8 pr-3">
+                <span class="text-blue-500">웹페이지 'Hook'</span>는
+                <span class="text-red-500">Node.js</span>와
+                <span class="text-red-500">mySQL</span>을 기반으로
+                제작하였습니다. 회원가입을 통해 취약점 진단 서비스를 이용할 수
+                있으며, 각 URL에 대한 진단결과 분석과 대응방안을 제공합니다.
+                과거 진단이력이 존재하는 경우에는 현재 이력과 직전 이력을 비교할
+                수 있도록 함께 출력합니다. 이 보고서는 버튼을 통해 PDF로 저장할
+                수 있도록 만들었습니다. 또한 진단 서비스 관련 기능 이외의
+                추가적인 기능에는 카카오 간편인증, 비밀번호 변경, 회원탈퇴가
+                있으며 세션관리를 통해 로그인 여부, 진단이력 유무, 취약점 유무에
+                따라 유동적인 페이지를 제공합니다.
+              </p>
+              <hr class="text-black" />
+              <div class="flex mt-8 leading-relaxed">
+                <div class="flex flex-col">
+                  <div class="flex flex-row py-1.5">
+                    <div class="flex w-20">
+                      <p class="font-semibold">주요기능</p>
+                    </div>
+                    <div cla>
+                      <p>
+                        웹취약점 진단, 직전이력 비교, PDF 저장, 카카오 로그인
+                      </p>
+                    </div>
+                  </div>
+                  <div class="flex flex-row py-1.5">
+                    <div class="w-20">
+                      <p class="font-semibold">진단도구</p>
+                    </div>
+                    <div>
+                      <p>Python (Selenuim)</p>
+                    </div>
+                  </div>
+                  <div class="flex flex-row py-1.5">
+                    <div class="w-20">
+                      <p class="font-semibold">웹페이지</p>
+                    </div>
+                    <div>
+                      <p>Front - ejs & tailwindCSS</p>
+                      <p>Back - Node.js & Javascript</p>
+                      <p>DBMS - mySQL</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex">
+                  <p></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- contact 영역 -->
+    <section
+      class="bg-gray-50 section border-b py-8 min-h-screen"
+      id="contact_section"
+    >
+      <div class="container max-w-5xl mx-auto m-8">
+        <div
+          class="mx-auto w-52 gradient text-center text-black font-bold rounded-full mt-24 mb-2 py-4 px-8 shadow-lg"
+        >
+          Contact Us
+        </div>
+        <div
+          class="mt-10 flex flex-col flex-wrap justify-around items-center lg:flex-row"
+        >
+          <div class="flex flex-col w-36 my-10">
+            <img
+              src="./img/youjin.png"
+              class="w-10 rounded-full border-2 border-gray-500"
+            />
+            <p class="mt-6 font-semibold">instagram</p>
+            <p class="text-sm">
+              <a href="https://www.instagram.com/eukkgeon"
+                ><img
+                  src="./img/instagram_icon.png"
+                  class="inline w-5"
+                  alt=""
+                />
+                @eukkgeon</a
+              >
+            </p>
+            <p class="mt-6 font-semibold">email</p>
+            <p class="text-sm">xsnorlaxx@naver.com</p>
+          </div>
+          <div class="flex flex-col w-36 my-10">
+            <img
+              src="./img/jiwon.png"
+              class="w-10 rounded-full border-2 border-gray-500"
+            />
+            <p class="mt-6 font-semibold">instagram</p>
+            <p class="text-sm">
+              <a href="https://www.instagram.com/sweetpea_wony"
+                ><img
+                  src="./img/instagram_icon.png"
+                  class="inline w-5"
+                  alt=""
+                />
+                @sweetpea_wony</a
+              >
+            </p>
+            <p class="mt-6 font-semibold">email</p>
+            <p class="text-sm">lhwjbu@naver.com</p>
+          </div>
+          <div class="flex flex-col w-36 my-10">
+            <img
+              src="./img/harin.png"
+              class="w-10 rounded-full border-2 border-gray-500"
+            />
+            <p class="mt-6 font-semibold">instagram</p>
+            <p class="text-sm">
+              <a href="https://www.instagram.com/sour_harin"
+                ><img
+                  src="./img/instagram_icon.png"
+                  class="inline w-5"
+                  alt=""
+                />
+                @sour_harin</a
+              >
+            </p>
+            <p class="mt-6 font-semibold">email</p>
+            <p class="text-sm">loyal1127@naver.com</p>
+          </div>
+          <div class="flex flex-col w-36 my-10">
+            <img
+              src="./img/dayeon.png"
+              class="w-10 rounded-full border-2 border-gray-500"
+            />
+            <p class="mt-6 font-semibold">instagram</p>
+            <p class="text-sm">
+              <a href="https://www.instagram.com/lxxlrbll"
+                ><img
+                  src="./img/instagram_icon.png"
+                  class="inline w-5"
+                  alt=""
+                />
+                @lxxlrbll</a
+              >
+            </p>
+            <p class="mt-6 font-semibold">email</p>
+            <p class="text-sm">dlxkdxs@naver.com</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <footer class="bg-white">
+      <div class="container mx-auto px-8">
+        <div class="w-full flex flex-col md:flex-row py-6">
+          <div class="flex-1 mb-6 text-black">
+            <a
+              class="text-green-700 no-underline hover:no-underline font-bold text-2xl lg:text-4xl"
+              href="#"
+            >
+              Hook
+            </a>
+          </div>
+          <div class="flex-1">
+            <a
+              href="/analysis"
+              class="text-gray-900 hover:text-green-700 md:mb-6"
+              >진단서비스</a
+            >
+            <ul class="list-none text-xs mb-6 cursor-default">
+              <li class="pl-[2px] mt-2 inline-block mr-2 md:block md:ml-0">
+                <p class="text-gray-500">진단도구</p>
+              </li>
+              <li class="pl-[2px] mt-2 inline-block mr-2 md:block md:ml-0">
+                <p class="text-gray-500">웹서비스</p>
+              </li>
+            </ul>
+          </div>
+          <div class="flex-1">
+            <a href="/list" class="text-gray-900 hover:text-green-700 md:mb-6"
+              >점검항목</a
+            >
+            <ul class="list-none text-xs mb-6 cursor-default">
+              <li class="pl-[2px] mt-2 inline-block mr-2 md:block md:ml-0">
+                <p class="text-gray-500">웹취약점</p>
+              </li>
+            </ul>
+          </div>
+          <div class="flex-1">
+            <a href="/result" class="text-gray-900 hover:text-green-700 md:mb-6"
+              >진단결과</a
+            >
+            <ul class="list-none text-xs mb-6 cursor-default">
+              <li class="pl-[2px] mt-2 inline-block mr-2 md:block md:ml-0">
+                <p class="text-gray-500">진단결과</p>
+              </li>
+              <li class="pl-[2px] mt-2 inline-block mr-2 md:block md:ml-0">
+                <p class="text-gray-500">대응방안</p>
+              </li>
+            </ul>
+          </div>
+          <div class="flex-1">
+            <a href="/info" class="text-gray-900 hover:text-green-700 md:mb-6"
+              >프로젝트소개</a
+            >
+            <ul class="list-none text-xs mb-6 cursor-default">
+              <li class="pl-[2px] mt-2 inline-block mr-2 md:block md:ml-0">
+                <p class="text-gray-500">about</p>
+              </li>
+              <li class="pl-[2px] mt-2 inline-block mr-2 md:block md:ml-0">
+                <p class="text-gray-500">project</p>
+              </li>
+              <li class="pl-[2px] mt-2 inline-block mr-2 md:block md:ml-0">
+                <p class="text-gray-500">contact</p>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      function scrollToSection(sectionId) {
+        var section = document.getElementById(sectionId);
+        section.scrollIntoView({ behavior: "smooth" });
+      }
+    </script>
+  </body>
+</html>

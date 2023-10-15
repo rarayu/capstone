@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="shortcut icon" href="/img/Hook_favicon.ico" type="image/x-icon">
+  <title>Hook</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500&display=swap");
+
+    body {
+      font-family: "Noto Sans KR", sans-serif;
+    }
+
+    .gradient {
+      background: linear-gradient(90deg, #0b952b9e 0%, #d8da51 100%);
+    }
+
+    .page-break {
+      page-break-inside: avoid;
+    }
+  </style>
+  <style type="text/tailwindcss">
+    @layer utilities {
+        a[aria-current="page"] {
+          @apply text-green-700;
+        }
+      }
+    </style>
+</head>
+
+<body class="bg-gray-100">
+
+  <!-- 헤더 영역 -->
+  <header class="fixed z-10 bg-white w-full h-24 shadow-lg border-gray-200 py-6">
+    <nav>
+      <div class="flex flex-wrap items-center justify-between max-w-screen-xl px-4 mx-auto">
+        <div class="flex">
+          <a href="https://www.joongbu.ac.kr/is/" class="block my-auto">
+            <img src="/img/JBU_logo.png" class="h-12 mx-2" alt="중부대 로고" />
+          </a>
+          <a href="/" class="block my-auto">
+            <img src="/img/Hook_logo.png" class="h-10 mx-1" alt="Hook 로고" />
+          </a>
+        </div>
+        <% if (is_logined) { %>
+          <form class="flex items-center lg:order-2 order-last" action="/auth/logout" method="post">
+            <% if (is_who=="admin" ) { %>
+              <a href="/admin"><img src="/img/admin_icon.png" alt="관리자 아이콘" class="h-9 mx-2"></a>
+              <% } %>
+                <button type="submit"
+                  class="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-xs shadow-md px-4 lg:px-5 py-2 lg:py-2.5 sm:mr-2 lg:mr-0">
+                  로그아웃
+                </button>
+          </form>
+          <% } else { %>
+            <div class="flex items-center lg:order-2">
+              <a href="/auth/login"
+                class="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-xs shadow-md px-4 lg:px-5 py-2 lg:py-2.5 sm:mr-2 lg:mr-0">로그인</a>
+              <a href="/auth/register"
+                class="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-xs shadow-md px-4 lg:px-5 py-2 lg:py-2.5 sm:mr-2 lg:mr-0 ml-1">회원가입</a>
+            </div>
+            <% } %>
+              <div class="items-center justify-between hidden w-full lg:flex lg:w-auto lg:order-1">
+                <ul class="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0">
+                  <li>
+                    <a href="/"
+                      class="block px-4 text-[22px] font-medium text-gray-700 hover:text-green-700 hover:transition-all hover:duration-300">홈</a>
+                  </li>
+                  <li>
+                    <a href="/analysis"
+                      class="block px-4 text-[22px] font-medium text-gray-700 hover:text-green-700 hover:transition-all hover:duration-300">진단서비스</a>
+                  </li>
+                  <li>
+                    <a href="/list"
+                      class="block px-4 text-[22px] font-medium text-gray-700 hover:text-green-700 hover:transition-all hover:duration-300">점검항목</a>
+                  </li>
+                  <li>
+                    <a href="/result"
+                      class="block px-4 text-[22px] font-medium text-gray-700 hover:text-green-700 hover:transition-all hover:duration-300"
+                      aria-current="page">진단결과</a>
+                  </li>
+                  <% if (is_logined) { %>
+                    <li>
+                      <a href="/auth/mypage"
+                        class="block px-4 text-[22px] font-medium text-gray-700 hover:text-green-700 hover:transition-all hover:duration-300">나의정보</a>
+                    </li>
+                    <% } %>
+                </ul>
+              </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- 진단결과 영역 -->
+  <section class="border-b py-12 w-[768px] mx-auto">
+    <div class="flex justify-end">
+      <button id="convertButton" class="mt-14 w-8 transition hover:scale-105 duration-300 ease-in-out">
+        <img src="/img/pdf_btn.png" alt="" />
+      </button>
+    </div>
+    <div id="result_pdf" class="container mx-auto my-2 rounded-lg shadow-lg bg-white py-5">
+      <h2 class="w-full my-2 text-3xl font-medium leading-tight text-center text-black">
+        진단결과
+      </h2>
+      <div class="px-9 text-justify mt-8 py-2 text-sm">
+        <p><span class="font-semibold">URL</span> : <%= url_address %>
+        </p>
+        <p>
+          <span class="font-semibold">점검일자</span> : <%= formattedDate1 %>
+        </p>
+      </div>
+      <div class="flex flex-col">
+        <div class="overflow-x-auto mx-0.5">
+          <div class="py-2 inline-block min-w-full px-8">
+            <div class="overflow-hidden">
+              <table class="min-w-full border-2 border-gray-200">
+                <thead class="bg-white border-b">
+                  <tr>
+                    <th scope="col" class="text-sm font-medium text-gray-900 px-5 py-4 text-left">
+                      <span class="font-semibold">번호</span>
+                    </th>
+                    <th scope="col" class="text-sm font-medium text-gray-900 px-5 py-4 text-left">
+                      <span class="font-semibold">항목</span>
+                    </th>
+                    <th scope="col" class="text-sm font-medium text-gray-900 px-5 py-4 text-left">
+                      <span class="font-semibold">직전 이력</span>
+                    </th>
+                    <th scope="col" class="text-sm font-medium text-gray-900 px-5 py-4 text-left">
+                      <span class="font-semibold">현재 이력</span>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- SI_Login -->
+                  <tr class="bg-gray-100 border-b page-break">
+                    <td class="px-6 py-2.5 whitespace-nomal text-sm font-medium text-gray-900">
+                      1
+                    </td>
+                    <td class="text-sm text-gray-900 font-medium capitalize px-6 py-2.5 whitespace-nomal">
+                      <%= scripts.SI_Login.name %>
+                    </td>
+                    <td
+                      class="<%= (SI_Login2 === 'risk') ? 'text-sm text-red-400 font-semibold capitalize px-6 py-2.5 whitespace-nomal' : 'text-sm text-gray-600 font-medium capitalize px-6 py-2.5 whitespace-nomal' %>">
+                      <%= SI_Login2 %>
+                    </td>
+                    <td
+                      class="<%= (SI_Login1 === 'risk') ? 'text-sm text-red-400 font-semibold capitalize px-6 py-2.5 whitespace-nomal' : 'text-sm text-gray-600 font-medium capitalize px-6 py-2.5 whitespace-nomal' %>">
+                      <%= SI_Login1 %>
+                    </td>
+                  </tr>
+                  <!-- SI_Search -->
+                  <tr class="bg-white border-b page-break">
+                    <td class="px-6 py-2.5 whitespace-nomal text-sm font-medium text-gray-900">
+                      2
+                    </td>
+                    <td class="text-sm text-gray-900 font-medium capitalize px-6 py-2.5 whitespace-nomal">
+                      <%= scripts.SI_Search.name %>
+                    </td>
+                    <td
+                      class="<%= (SI_Search2 === 'risk') ? 'text-sm text-red-400 font-semibold capitalize px-6 py-2.5 whitespace-nomal' : 'text-sm text-gray-600 font-medium capitalize px-6 py-2.5 whitespace-nomal' %>">
+                      <%= SI_Search2 %>
+                    </td>
+                    <td
+                      class="<%= (SI_Search1 === 'risk') ? 'text-sm text-red-400 font-semibold capitalize px-6 py-2.5 whitespace-nomal' : 'text-sm text-gray-600 font-medium capitalize px-6 py-2.5 whitespace-nomal' %>">
+                      <%= SI_Search1 %>
+                    </td>
+                  </tr>
+                  <!-- PHP_CI -->
+                  <tr class="bg-gray-100 border-b page-break">
+                    <td class="px-6 py-2.5 whitespace-nomal text-sm font-medium text-gray-900">
+                      3
+                    </td>
+                    <td class="text-sm text-gray-900 font-medium capitalize px-6 py-2.5 whitespace-nomal">
+                      <%= scripts.PHP_CI.name %>
+                    </td>
+                    <td
+                      class="<%= (PHP_CI2 === 'risk') ? 'text-sm text-red-400 font-semibold capitalize px-6 py-2.5 whitespace-nomal' : 'text-sm text-gray-600 font-medium capitalize px-6 py-2.5 whitespace-nomal' %>">
+                      <%= PHP_CI2 %>
+                    </td>
+                    <td
+                      class="<%= (PHP_CI1 === 'risk') ? 'text-sm text-red-400 font-semibold capitalize px-6 py-2.5 whitespace-nomal' : 'text-sm text-gray-600 font-medium capitalize px-6 py-2.5 whitespace-nomal' %>">
+                      <%= PHP_CI1 %>
+                    </td>
+                  </tr>
+                  <!-- AE -->
+                  <tr class="bg-white border-b page-break">
+                    <td class="px-6 py-2.5 whitespace-nomal text-sm font-medium text-gray-900">
+                      4
+                    </td>
+                    <td class="text-sm text-gray-900 font-medium capitalize px-6 py-2.5 whitespace-nomal">
+                      <%= scripts.AE.name %>
+                    </td>
+                    <td
+                      class="<%= (AE2 === 'risk') ? 'text-sm text-red-400 font-semibold capitalize px-6 py-2.5 whitespace-nomal' : 'text-sm text-gray-600 font-medium capitalize px-6 py-2.5 whitespace-nomal' %>">
+                      <%= AE2 %>
+                    </td>
+                    <td
+                      class="<%= (AE1 === 'risk') ? 'text-sm text-red-400 font-semibold capitalize px-6 py-2.5 whitespace-nomal' : 'text-sm text-gray-600 font-medium capitalize px-6 py-2.5 whitespace-nomal' %>">
+                      <%= AE1 %>
+                    </td>
+                  </tr>
+                  <!-- DL -->
+                  <tr class="bg-gray-100 border-b page-break">
+                    <td class="px-6 py-2.5 whitespace-nomal text-sm font-medium text-gray-900">
+                      5
+                    </td>
+                    <td class="text-sm text-gray-900 font-medium capitalize px-6 py-2.5 whitespace-nomal">
+                      <%= scripts.DL.name %>
+                    </td>
+                    <td
+                      class="<%= (DL2 === 'risk') ? 'text-sm text-red-400 font-semibold capitalize px-6 py-2.5 whitespace-nomal' : 'text-sm text-gray-600 font-medium capitalize px-6 py-2.5 whitespace-nomal' %>">
+                      <%= DL2 %>
+                    </td>
+                    <td
+                      class="<%= (DL1 === 'risk') ? 'text-sm text-red-400 font-semibold capitalize px-6 py-2.5 whitespace-nomal' : 'text-sm text-gray-600 font-medium capitalize px-6 py-2.5 whitespace-nomal' %>">
+                      <%= DL1 %>
+                    </td>
+                  </tr>
+                  <!-- XSS_Stored -->
+                  <tr class="bg-white border-b page-break">
+                    <td class="px-6 py-2.5 whitespace-nomal text-sm font-medium text-gray-900">
+                      6
+                    </td>
+                    <td class="text-sm text-gray-900 font-medium capitalize px-6 py-2.5 whitespace-nomal">
+                      <%= scripts.XSS_Stored.name %>
+                    </td>
+                    <td
+                      class="<%= (XSS_Stored2 === 'risk') ? 'text-sm text-red-400 font-semibold capitalize px-6 py-2.5 whitespace-nomal' : 'text-sm text-gray-600 font-medium capitalize px-6 py-2.5 whitespace-nomal' %>">
+                      <%= XSS_Stored2 %>
+                    </td>
+                    <td
+                      class="<%= (XSS_Stored1 === 'risk') ? 'text-sm text-red-400 font-semibold capitalize px-6 py-2.5 whitespace-nomal' : 'text-sm text-gray-600 font-medium capitalize px-6 py-2.5 whitespace-nomal' %>">
+                      <%= XSS_Stored1 %>
+                    </td>
+                  </tr>
+                  <!-- SF -->
+                  <tr class="bg-gray-100 border-b page-break">
+                    <td class="px-6 py-2.5 whitespace-nomal text-sm font-medium text-gray-900">
+                      7
+                    </td>
+                    <td class="text-sm text-gray-900 font-medium capitalize px-6 py-2.5 whitespace-nomal">
+                      <%= scripts.SF.name %>
+                    </td>
+                    <td
+                      class="<%= (SF2 === 'risk') ? 'text-sm text-red-400 font-semibold capitalize px-6 py-2.5 whitespace-nomal' : 'text-sm text-gray-600 font-medium capitalize px-6 py-2.5 whitespace-nomal' %>">
+                      <%= SF2 %>
+                    </td>
+                    <td
+                      class="<%= (SF1 === 'risk') ? 'text-sm text-red-400 font-semibold capitalize px-6 py-2.5 whitespace-nomal' : 'text-sm text-gray-600 font-medium capitalize px-6 py-2.5 whitespace-nomal' %>">
+                      <%= SF1 %>
+                    </td>
+                  </tr>
+                  <!-- Cookie -->
+                  <tr class="bg-white border-b page-break">
+                    <td class="px-6 py-2.5 whitespace-nomal text-sm font-medium text-gray-900">
+                      8
+                    </td>
+                    <td class="text-sm text-gray-900 font-medium capitalize px-6 py-2.5 whitespace-nomal">
+                      <%= scripts.Cookie.name %>
+                    </td>
+                    <td
+                      class="<%= (Cookie2 === 'risk') ? 'text-sm text-red-400 font-semibold capitalize px-6 py-2.5 whitespace-nomal' : 'text-sm text-gray-600 font-medium capitalize px-6 py-2.5 whitespace-nomal' %>">
+                      <%= Cookie2 %>
+                    </td>
+                    <td
+                      class="<%= (Cookie1 === 'risk') ? 'text-sm text-red-400 font-semibold capitalize px-6 py-2.5 whitespace-nomal' : 'text-sm text-gray-600 font-medium capitalize px-6 py-2.5 whitespace-nomal' %>">
+                      <%= Cookie1 %>
+                    </td>
+                  </tr>
+                  <!-- Redirect -->
+                  <tr class="bg-gray-100 border-b page-break">
+                    <td class="px-6 py-2.5 whitespace-nomal text-sm font-medium text-gray-900">
+                      9
+                    </td>
+                    <td class="text-sm text-gray-900 font-medium capitalize px-6 py-2.5 whitespace-nomal">
+                      <%= scripts.Redirect.name %>
+                    </td>
+                    <td
+                      class="<%= (Redirect2 === 'risk') ? 'text-sm text-red-400 font-semibold capitalize px-6 py-2.5 whitespace-nomal' : 'text-sm text-gray-600 font-medium capitalize px-6 py-2.5 whitespace-nomal' %>">
+                      <%= Redirect2 %>
+                    </td>
+                    <td
+                      class="<%= (Redirect1 === 'risk') ? 'text-sm text-red-400 font-semibold capitalize px-6 py-2.5 whitespace-nomal' : 'text-sm text-gray-600 font-medium capitalize px-6 py-2.5 whitespace-nomal' %>">
+                      <%= Redirect1 %>
+                    </td>
+                  </tr>
+                  <!-- CSRF -->
+                  <tr class="bg-white border-b page-break">
+                    <td class="px-6 py-2.5 whitespace-nomal text-sm font-medium text-gray-900">
+                      10
+                    </td>
+                    <td class="text-sm text-gray-900 font-medium capitalize px-6 py-2.5 whitespace-nomal">
+                      <%= scripts.CSRF.name %>
+                    </td>
+                    <td
+                      class="<%= (CSRF2 === 'risk') ? 'text-sm text-red-400 font-semibold capitalize px-6 py-2.5 whitespace-nomal' : 'text-sm text-gray-600 font-medium capitalize px-6 py-2.5 whitespace-nomal' %>">
+                      <%= CSRF2 %>
+                    </td>
+                    <td
+                      class="<%= (CSRF1 === 'risk') ? 'text-sm text-red-400 font-semibold capitalize px-6 py-2.5 whitespace-nomal' : 'text-sm text-gray-600 font-medium capitalize px-6 py-2.5 whitespace-nomal' %>">
+                      <%= CSRF1 %>
+                    </td>
+                  </tr>
+                  <!-- BF -->
+                  <tr class="bg-gray-100 border-b page-break">
+                    <td class="px-6 py-2.5 whitespace-nomal text-sm font-medium text-gray-900">
+                      11
+                    </td>
+                    <td class="text-sm text-gray-900 font-medium capitalize px-6 py-2.5 whitespace-nomal">
+                      <%= scripts.BF.name %>
+                    </td>
+                    <td
+                      class="<%= (BF2 === 'risk') ? 'text-sm text-red-400 font-semibold capitalize px-6 py-2.5 whitespace-nomal' : 'text-sm text-gray-600 font-medium capitalize px-6 py-2.5 whitespace-nomal' %>">
+                      <%= BF2 %>
+                    </td>
+                    <td
+                      class="<%= (BF1 === 'risk') ? 'text-sm text-red-400 font-semibold capitalize px-6 py-2.5 whitespace-nomal' : 'text-sm text-gray-600 font-medium capitalize px-6 py-2.5 whitespace-nomal' %>">
+                      <%= BF1 %>
+                    </td>
+                  </tr>
+                  <!-- LDAP -->
+                  <tr class="bg-white border-b page-break">
+                    <td class="px-6 py-2.5 whitespace-nomal text-sm font-medium text-gray-900">
+                      12
+                    </td>
+                    <td class="text-sm text-gray-900 font-medium capitalize px-6 py-2.5 whitespace-nomal">
+                      <%= scripts.LDAP.name %>
+                    </td>
+                    <td
+                      class="<%= (LDAP2 === 'risk') ? 'text-sm text-red-400 font-semibold capitalize px-6 py-2.5 whitespace-nomal' : 'text-sm text-gray-600 font-medium capitalize px-6 py-2.5 whitespace-nomal' %>">
+                      <%= LDAP2 %>
+                    </td>
+                    <td
+                      class="<%= (LDAP1 === 'risk') ? 'text-sm text-red-400 font-semibold capitalize px-6 py-2.5 whitespace-nomal' : 'text-sm text-gray-600 font-medium capitalize px-6 py-2.5 whitespace-nomal' %>">
+                      <%= LDAP1 %>
+                    </td>
+                  </tr>
+                  <!-- XML_XPATH -->
+                  <tr class="bg-gray-100 border-b page-break">
+                    <td class="px-6 py-2.5 whitespace-nomal text-sm font-medium text-gray-900">
+                      13
+                    </td>
+                    <td class="text-sm text-gray-900 font-medium capitalize px-6 py-2.5 whitespace-nomal">
+                      <%= scripts.XML_XPATH.name %>
+                    </td>
+                    <td
+                      class="<%= (XML_XPATH2 === 'risk') ? 'text-sm text-red-400 font-semibold capitalize px-6 py-2.5 whitespace-nomal' : 'text-sm text-gray-600 font-medium capitalize px-6 py-2.5 whitespace-nomal' %>">
+                      <%= XML_XPATH2 %>
+                    </td>
+                    <td
+                      class="<%= (XML_XPATH1 === 'risk') ? 'text-sm text-red-400 font-semibold capitalize px-6 py-2.5 whitespace-nomal' : 'text-sm text-gray-600 font-medium capitalize px-6 py-2.5 whitespace-nomal' %>">
+                      <%= XML_XPATH1 %>
+                    </td>
+                  </tr>
+                  <!-- BA -->
+                  <tr class="bg-white border-b page-break">
+                    <td class="px-6 py-2.5 whitespace-nomal text-sm font-medium text-gray-900">
+                      14
+                    </td>
+                    <td class="text-sm text-gray-900 font-medium capitalize px-6 py-2.5 whitespace-nomal">
+                      <%= scripts.BA.name %>
+                    </td>
+                    <td
+                      class="<%= (BA2 === 'risk') ? 'text-sm text-red-400 font-semibold capitalize px-6 py-2.5 whitespace-nomal' : 'text-sm text-gray-600 font-medium capitalize px-6 py-2.5 whitespace-nomal' %>">
+                      <%= BA2 %>
+                    </td>
+                    <td
+                      class="<%= (BA1 === 'risk') ? 'text-sm text-red-400 font-semibold capitalize px-6 py-2.5 whitespace-nomal' : 'text-sm text-gray-600 font-medium capitalize px-6 py-2.5 whitespace-nomal' %>">
+                      <%= BA1 %>
+                    </td>
+                  </tr>
+                  <!-- DOR -->
+                  <tr class="bg-gray-100 border-b page-break">
+                    <td class="px-6 py-2.5 whitespace-nomal text-sm font-medium text-gray-900">
+                      15
+                    </td>
+                    <td class="text-sm text-gray-900 font-medium capitalize px-6 py-2.5 whitespace-nomal">
+                      <%= scripts.DOR.name %>
+                    </td>
+                    <td
+                      class="<%= (DOR2 === 'risk') ? 'text-sm text-red-400 font-semibold capitalize px-6 py-2.5 whitespace-nomal' : 'text-sm text-gray-600 font-medium capitalize px-6 py-2.5 whitespace-nomal' %>">
+                      <%= DOR2 %>
+                    </td>
+                    <td
+                      class="<%= (DOR1 === 'risk') ? 'text-sm text-red-400 font-semibold capitalize px-6 py-2.5 whitespace-nomal' : 'text-sm text-gray-600 font-medium capitalize px-6 py-2.5 whitespace-nomal' %>">
+                      <%= DOR1 %>
+                    </td>
+                  </tr>
+                  <!-- Base -->
+                  <tr class="bg-white border-b page-break">
+                    <td class="px-6 py-2.5 whitespace-nomal text-sm font-medium text-gray-900">
+                      16
+                    </td>
+                    <td class="text-sm text-gray-900 font-medium capitalize px-6 py-2.5 whitespace-nomal">
+                      <%= scripts.Base.name %>
+                    </td>
+                    <td
+                      class="<%= (Base2 === 'risk') ? 'text-sm text-red-400 font-semibold capitalize px-6 py-2.5 whitespace-nomal' : 'text-sm text-gray-600 font-medium capitalize px-6 py-2.5 whitespace-nomal' %>">
+                      <%= Base2 %>
+                    </td>
+                    <td
+                      class="<%= (Base1 === 'risk') ? 'text-sm text-red-400 font-semibold capitalize px-6 py-2.5 whitespace-nomal' : 'text-sm text-gray-600 font-medium capitalize px-6 py-2.5 whitespace-nomal' %>">
+                      <%= Base1 %>
+                    </td>
+                  </tr>
+                  <!-- RFA -->
+                  <tr class="bg-gray-100 border-b page-break">
+                    <td class="px-6 py-2.5 whitespace-nomal text-sm font-medium text-gray-900">
+                      17
+                    </td>
+                    <td class="text-sm text-gray-900 font-medium capitalize px-6 py-2.5 whitespace-nomal">
+                      <%= scripts.RFA.name %>
+                    </td>
+                    <td
+                      class="<%= (RFA2 === 'risk') ? 'text-sm text-red-400 font-semibold capitalize px-6 py-2.5 whitespace-nomal' : 'text-sm text-gray-600 font-medium capitalize px-6 py-2.5 whitespace-nomal' %>">
+                      <%= RFA2 %>
+                    </td>
+                    <td
+                      class="<%= (RFA1 === 'risk') ? 'text-sm text-red-400 font-semibold capitalize px-6 py-2.5 whitespace-nomal' : 'text-sm text-gray-600 font-medium capitalize px-6 py-2.5 whitespace-nomal' %>">
+                      <%= RFA1 %>
+                    </td>
+                  </tr>
+                  <!-- XSS -->
+                  <tr class="bg-white border-b page-break">
+                    <td class="px-6 py-2.5 whitespace-nomal text-sm font-medium text-gray-900">
+                      18
+                    </td>
+                    <td class="text-sm text-gray-900 font-medium capitalize px-6 py-2.5 whitespace-nomal">
+                      <%= scripts.XSS.name %>
+                    </td>
+                    <td
+                      class="<%= (XSS2 === 'risk') ? 'text-sm text-red-400 font-semibold capitalize px-6 py-2.5 whitespace-nomal' : 'text-sm text-gray-600 font-medium capitalize px-6 py-2.5 whitespace-nomal' %>">
+                      <%= XSS2 %>
+                    </td>
+                    <td
+                      class="<%= (XSS1 === 'risk') ? 'text-sm text-red-400 font-semibold capitalize px-6 py-2.5 whitespace-nomal' : 'text-sm text-gray-600 font-medium capitalize px-6 py-2.5 whitespace-nomal' %>">
+                      <%= XSS1 %>
+                    </td>
+                  </tr>
+                  <!-- SM -->
+                  <tr class="bg-gray-100 border-b page-break">
+                    <td class="px-6 py-2.5 whitespace-nomal text-sm font-medium text-gray-900">
+                      19
+                    </td>
+                    <td class="text-sm text-gray-900 font-medium capitalize px-6 py-2.5 whitespace-nomal">
+                      <%= scripts.SM.name %>
+                    </td>
+                    <td
+                      class="<%= (SM2 === 'risk') ? 'text-sm text-red-400 font-semibold capitalize px-6 py-2.5 whitespace-nomal' : 'text-sm text-gray-600 font-medium capitalize px-6 py-2.5 whitespace-nomal' %>">
+                      <%= SM2 %>
+                    </td>
+                    <td
+                      class="<%= (SM1 === 'risk') ? 'text-sm text-red-400 font-semibold capitalize px-6 py-2.5 whitespace-nomal' : 'text-sm text-gray-600 font-medium capitalize px-6 py-2.5 whitespace-nomal' %>">
+                      <%= SM1 %>
+                    </td>
+                  </tr>
+                  <!-- BS -->
+                  <tr class="bg-white border-b page-break">
+                    <td class="px-6 py-2.5 whitespace-nomal text-sm font-medium text-gray-900">
+                      20
+                    </td>
+                    <td class="text-sm text-gray-900 font-medium capitalize px-6 py-2.5 whitespace-nomal">
+                      <%= scripts.BS.name %>
+                    </td>
+                    <td
+                      class="<%= (BS2 === 'risk') ? 'text-sm text-red-400 font-semibold capitalize px-6 py-2.5 whitespace-nomal' : 'text-sm text-gray-600 font-medium capitalize px-6 py-2.5 whitespace-nomal' %>">
+                      <%= BS2 %>
+                    </td>
+                    <td
+                      class="<%= (BS1 === 'risk') ? 'text-sm text-red-400 font-semibold capitalize px-6 py-2.5 whitespace-nomal' : 'text-sm text-gray-600 font-medium capitalize px-6 py-2.5 whitespace-nomal' %>">
+                      <%= BS1 %>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 대응방안 영역 -->
+      <h2 class="w-full mt-28 my-2 text-3xl font-medium leading-tight text-center text-black page-break">
+        대응방안
+      </h2>
+      <% if (riskKeys.length===0) { %>
+        <p class="px-9 text-center mt-8 py-2 text-sm">
+          취약한 항목이 존재하지 않습니다.
+        </p>
+        <% } else { %>
+          <div class="px-9 text-justify mt-8 py-2 text-sm">
+            <p>
+              20개 항목 중
+              <span class="font-semibold">
+                <%= riskKeys.length %>
+              </span>개 취약
+            </p>
+          </div>
+          <div class="flex flex-col">
+            <div class="mx-0.5">
+              <div class="py-2 inline-block min-w-full px-8">
+                <div class="overflow-hidden">
+                  <table class="min-w-full border-2 border-gray-200">
+                    <thead class="bg-white border-b">
+                      <tr>
+                        <th scope="col" class="text-sm font-medium text-gray-900 px-5 py-4 text-left">
+                          <span class="font-semibold">취약 항목</span>
+                        </th>
+                        <th scope="col" class="text-sm font-medium text-gray-900 px-5 py-4 text-left">
+                          <span class="font-semibold">대응 방안</span>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <!-- SI_Login -->
+                      <% riskKeys.forEach(function(key) { %>
+                        <tr class="border-b page-break">
+                          <td class="bg-white text-sm text-gray-900 px-6 py-4 whitespace-nomal break-words">
+                            <%= scripts[key].name %>
+                          </td>
+                          <td
+                            class="bg-gray-100 text-sm text-gray-900 font-medium px-6 py-4 whitespace-nomal break-words">
+                            <%= scripts[key].measures %>
+                          </td>
+                        </tr>
+                        <% }) %>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+          <% } %>
+    </div>
+  </section>
+
+  <!-- 푸터 영역 -->
+  <footer class="bg-white">
+    <div class="container mx-auto px-8">
+      <div class="w-full flex flex-col md:flex-row py-6">
+        <div class="flex-1 mb-6 text-black">
+          <a class="text-green-700 no-underline hover:no-underline font-bold text-2xl lg:text-4xl" href="#">
+            Hook
+          </a>
+        </div>
+        <div class="flex-1">
+          <a href="/analysis" class="text-gray-900 hover:text-green-700 md:mb-6">진단서비스</a>
+          <ul class="list-none text-xs mb-6 cursor-default">
+            <li class="pl-[2px] mt-2 inline-block mr-2 md:block md:ml-0">
+              <p class="text-gray-600">진단도구</p>
+            </li>
+            <li class="pl-[2px] mt-2 inline-block mr-2 md:block md:ml-0">
+              <p class="text-gray-600">웹서비스</p>
+            </li>
+          </ul>
+        </div>
+        <div class="flex-1">
+          <a href="/list" class="text-gray-900 hover:text-green-700 md:mb-6">점검항목</a>
+          <ul class="list-none text-xs mb-6 cursor-default">
+            <li class="pl-[2px] mt-2 inline-block mr-2 md:block md:ml-0">
+              <p class="text-gray-600">웹취약점</p>
+            </li>
+          </ul>
+        </div>
+        <div class="flex-1">
+          <a href="/result" class="text-gray-900 hover:text-green-700 md:mb-6">진단결과</a>
+          <ul class="list-none text-xs mb-6 cursor-default">
+            <li class="pl-[2px] mt-2 inline-block mr-2 md:block md:ml-0">
+              <p class="text-gray-600">진단결과</p>
+            </li>
+            <li class="pl-[2px] mt-2 inline-block mr-2 md:block md:ml-0">
+              <p class="text-gray-600">대응방안</p>
+            </li>
+          </ul>
+        </div>
+        <div class="flex-1">
+          <a href="/info" class="text-gray-900 hover:text-green-700 md:mb-6">프로젝트소개</a>
+          <ul class="list-none text-xs mb-6 cursor-default">
+            <li class="pl-[2px] mt-2 inline-block mr-2 md:block md:ml-0">
+              <p class="text-gray-600">about</p>
+            </li>
+            <li class="pl-[2px] mt-2 inline-block mr-2 md:block md:ml-0">
+              <p class="text-gray-600">project</p>
+            </li>
+            <li class="pl-[2px] mt-2 inline-block mr-2 md:block md:ml-0">
+              <p class="text-gray-600">contact</p>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function convertHtmlToPdf() {
+      const element = document.getElementById("result_pdf");
+      html2pdf()
+        .set({
+          scale: 0.5,
+        })
+        .from(element)
+        .save("웹취약점 진단결과.pdf");
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      const convertButton = document.getElementById("convertButton");
+      convertButton.addEventListener("click", convertHtmlToPdf);
+    });
+  </script>
+</body>
+
+</html>

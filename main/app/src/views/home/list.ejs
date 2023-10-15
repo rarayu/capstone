@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="/img/Hook_favicon.ico" type="image/x-icon">
+    <title>Hook</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500&display=swap");
+
+      body {
+        font-family: "Noto Sans KR", sans-serif;
+      }
+
+      .gradient {
+        background: linear-gradient(90deg, #0b952b9e 0%, #d8da51 100%);
+      }
+    </style>
+    <style type="text/tailwindcss">
+      @layer utilities {
+          a[aria-current="page"] {
+            @apply text-green-700;
+          }
+        }
+      </style>
+  </head>
+
+  <body class="leading-normal tracking-normal text-white bg-gray-100">
+    <header class="fixed z-10 bg-white w-full h-24 shadow-lg border-gray-200 py-6">
+      <div class="flex flex-wrap items-center justify-between max-w-screen-xl px-4 mx-auto">
+        <div class="flex">
+          <a href="https://www.joongbu.ac.kr/is/" class="block my-auto">
+            <img src="/img/JBU_logo.png" class="h-12 mx-2" alt="중부대 로고" />
+          </a>
+          <a href="/" class="block my-auto">
+            <img src="/img/Hook_logo.png" class="h-10 mx-1" alt="Hook 로고" />
+          </a>
+        </div>
+        <% if (is_logined) { %>
+        <form class="flex items-center lg:order-2 order-last" action="/auth/logout" method="post">
+          <% if (is_who=="admin" ) { %>
+            <a href="/admin"><img src="/img/admin_icon.png" alt="관리자 아이콘" class="h-9 mx-2"></a>
+            <% } %>
+            <button type="submit"
+              class="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-xs shadow-md px-4 lg:px-5 py-2 lg:py-2.5 sm:mr-2 lg:mr-0">
+              로그아웃
+            </button>
+        </form>
+        <% } else { %>
+        <div class="flex items-center lg:order-2">
+          <a href="/auth/login"
+            class="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-xs shadow-md px-4 lg:px-5 py-2 lg:py-2.5 sm:mr-2 lg:mr-0">로그인</a>
+          <a href="/auth/register"
+            class="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-xs shadow-md px-4 lg:px-5 py-2 lg:py-2.5 sm:mr-2 lg:mr-0 ml-1">회원가입</a>
+        </div>
+        <% } %>
+        <div class="items-center justify-between hidden w-full lg:flex lg:w-auto lg:order-1">
+          <ul class="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0">
+            <li>
+              <a href="/"
+                class="block px-4 text-[22px] font-medium text-gray-700 hover:text-green-700 hover:transition-all hover:duration-300">홈</a>
+            </li>
+            <li>
+              <a href="/analysis"
+                class="block px-4 text-[22px] font-medium text-gray-700 hover:text-green-700 hover:transition-all hover:duration-300">진단서비스</a>
+            </li>
+            <li>
+              <a href="/list"
+                class="block px-4 text-[22px] font-medium text-gray-700 hover:text-green-700 hover:transition-all hover:duration-300"
+                aria-current="page">점검항목</a>
+            </li>
+            <li>
+              <a href="/result"
+                class="block px-4 text-[22px] font-medium text-gray-700 hover:text-green-700 hover:transition-all hover:duration-300">진단결과</a>
+            </li>
+            <% if (is_logined) { %>
+              <li>
+                <a href="/auth/mypage"
+                  class="block px-4 text-[22px] font-medium text-gray-700 hover:text-green-700 hover:transition-all hover:duration-300">나의정보</a>
+              </li>
+              <% } %>
+          </ul>
+        </div>
+      </div>
+    </header>
+    <section class="border-b py-8 w-3/5 mx-auto">
+      <div class="container max-w-5xl mx-auto m-8 rounded-lg shadow-lg bg-white mt-20 pt-5">
+        <h2 class="w-full my-2 text-4xl font-bold leading-tight text-center text-gray-800">
+          점검항목
+        </h2>
+        <div class="w-full mb-4">
+          <div class="h-1 mx-auto mb-10 gradient w-64 opacity-25 my-0 py-0 rounded-t"></div>
+        </div>
+        <div class="flex flex-wrap">
+          <% for (let key in scripts) { %>
+            <div class="w-full px-6 py-3">
+              <div class="align-middle">
+                <h3 class="text-2xl text-gray-800 font-bold leading-none mt-6">
+                  <%= scripts[key].name %>
+                </h3>
+                <p class="text-gray-600 mt-3">
+                  <%= scripts[key].info %>
+                    <hr class="mt-12">
+                </p>
+              </div>
+            </div>
+            <% } %>
+        </div>
+      </div>
+    </section>
+    <footer class="bg-white">
+      <div class="container mx-auto px-8">
+        <div class="w-full flex flex-col md:flex-row py-6">
+          <div class="flex-1 mb-6 text-black">
+            <a class="text-green-700 no-underline hover:no-underline font-bold text-2xl lg:text-4xl" href="#">
+              Hook
+            </a>
+          </div>
+          <div class="flex-1">
+            <a href="/analysis" class="text-gray-900 hover:text-green-700 md:mb-6">진단서비스</a>
+            <ul class="list-none text-xs mb-6 cursor-default">
+              <li class="pl-[2px] mt-2 inline-block mr-2 md:block md:ml-0">
+                <p class="text-gray-500">진단도구</p>
+              </li>
+              <li class="pl-[2px] mt-2 inline-block mr-2 md:block md:ml-0">
+                <p class="text-gray-500">웹서비스</p>
+              </li>
+            </ul>
+          </div>
+          <div class="flex-1">
+            <a href="/list" class="text-gray-900 hover:text-green-700 md:mb-6">점검항목</a>
+            <ul class="list-none text-xs mb-6 cursor-default">
+              <li class="pl-[2px] mt-2 inline-block mr-2 md:block md:ml-0">
+                <p class="text-gray-500">웹취약점</p>
+              </li>
+            </ul>
+          </div>
+          <div class="flex-1">
+            <a href="/result" class="text-gray-900 hover:text-green-700 md:mb-6">진단결과</a>
+            <ul class="list-none text-xs mb-6 cursor-default">
+              <li class="pl-[2px] mt-2 inline-block mr-2 md:block md:ml-0">
+                <p class="text-gray-500">진단결과</p>
+              </li>
+              <li class="pl-[2px] mt-2 inline-block mr-2 md:block md:ml-0">
+                <p class="text-gray-500">대응방안</p>
+              </li>
+            </ul>
+          </div>
+          <div class="flex-1">
+            <a href="/info" class="text-gray-900 hover:text-green-700 md:mb-6">프로젝트소개</a>
+            <ul class="list-none text-xs mb-6 cursor-default">
+              <li class="pl-[2px] mt-2 inline-block mr-2 md:block md:ml-0">
+                <p class="text-gray-500">about</p>
+              </li>
+              <li class="pl-[2px] mt-2 inline-block mr-2 md:block md:ml-0">
+                <p class="text-gray-500">project</p>
+              </li>
+              <li class="pl-[2px] mt-2 inline-block mr-2 md:block md:ml-0">
+                <p class="text-gray-500">contact</p>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </body>
+
+</html>
